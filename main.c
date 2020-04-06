@@ -268,58 +268,6 @@ void genRoads() {
   glPopMatrix();
 }
 
-void NormalKey(GLubyte key, GLint x, GLint y) {
-  switch (key)    {
-  case ESCAPE :
-    printf("escape pressed. exit.\n");
-    glutDestroyWindow(window);
-    exit(0);
-    break;
-  case 'x':
-    xangle += 5.0;
-    glutPostRedisplay();
-    break;
-  case 'X':
-    xangle -= 5.0;
-    glutPostRedisplay();
-    break;
-  case 'y':
-    yangle += 5.0;
-    glutPostRedisplay();
-    break;
-  case 'Y':
-    yangle -= 5.0;
-    glutPostRedisplay();
-    break;
-  case 'z':
-    zangle += 5.0;
-    glutPostRedisplay();
-    break;
-  case 'Z':
-    zangle -= 5.0;
-    glutPostRedisplay();
-    break;
-  case 'u':                          /* Move up */
-    yt += 0.2;
-    glutPostRedisplay();
-    break;
-  case 'U':
-    yt -= 0.2;                      /* Move down */
-    glutPostRedisplay();
-    break;
-  case 'f':                          /* Move forward */
-    zt += 0.2;
-    glutPostRedisplay();
-    break;
-  case 'F':
-    zt -= 0.2;                      /* Move away */
-    glutPostRedisplay();
-    break;
-  default:
-    break;
-  }
-}
-
 void sphereBuilding() {
   glPushMatrix();
 
@@ -697,6 +645,58 @@ void drawCar() {
   glTexCoord2f(0.005f, 0.005f);
   glVertex3f( 0.2f, 0.25f, 0.45f);
   glEnd();
+}
+
+void NormalKey(GLubyte key, GLint x, GLint y) {
+  switch (key)    {
+  case ESCAPE :
+    printf("escape pressed. exit.\n");
+    glutDestroyWindow(window);
+    exit(0);
+    break;
+  case 'x':
+    xangle += 5.0;
+    glutPostRedisplay();
+    break;
+  case 'X':
+    xangle -= 5.0;
+    glutPostRedisplay();
+    break;
+  case 'y':
+    yangle += 5.0;
+    glutPostRedisplay();
+    break;
+  case 'Y':
+    yangle -= 5.0;
+    glutPostRedisplay();
+    break;
+  case 'z':
+    zangle += 5.0;
+    glutPostRedisplay();
+    break;
+  case 'Z':
+    zangle -= 5.0;
+    glutPostRedisplay();
+    break;
+  case 'u':                          /* Move up */
+    yt += 0.2;
+    glutPostRedisplay();
+    break;
+  case 'U':
+    yt -= 0.2;                      /* Move down */
+    glutPostRedisplay();
+    break;
+  case 'f':                          /* Move forward */
+    zt += 0.2;
+    glutPostRedisplay();
+    break;
+  case 'F':
+    zt -= 0.2;                      /* Move away */
+    glutPostRedisplay();
+    break;
+  default:
+    break;
+  }
 }
 
 static void SpecialKeyFunc( int Key, int x, int y ) {
