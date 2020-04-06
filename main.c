@@ -21,6 +21,14 @@ GLint Xsize = 1000;
 GLint Ysize = 800;
 GLint nml = 0;
 
+float eyex = -30.0f;
+float eyey = 30.0f;
+float eyez = -30.0f;
+
+float carx = 0.0f;
+float cary = 0.0f;
+float carz = 0.0f;
+
 GLfloat xt = 0.0, yt = 0.0, zt = 0.0, xw = 0.0;
 GLfloat xs = 1.0, ys = 1.0, zs = 1.0;
 GLfloat xangle = 5.0, yangle = 0.0, zangle = 0.0, angle = 0.0;
@@ -72,6 +80,8 @@ void init() {
   glutPostRedisplay();
 }
 
+
+
 GLvoid DrawGLScene() {
   float i;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -80,14 +90,17 @@ GLvoid DrawGLScene() {
 
   glClearColor(1,1,1,1);
 
-  glPushMatrix();
   glLoadIdentity();
+
+  gluLookAt(eyex + carx, eyey + cary, eyez + carz, carx, cary, carz, 0, 1, 0);
+  /*
   glTranslatef(-1.0,0.0,-3.5);
   glRotatef(xangle,1.0,0.0,0.0);
   glRotatef(yangle,0.0,1.0,0.0);
   glRotatef(zangle,0.0,0.0,1.0);
   glTranslatef(xt,yt,zt);
   glScalef(xs,ys,zs);
+  */
   glEnable(GL_COLOR_MATERIAL);
 
   // For fog effect
@@ -104,61 +117,20 @@ GLvoid DrawGLScene() {
   //*****************************road and surrounding development***********************************
   glPushMatrix();
   glTranslatef(xw,0,0);
-  glColor3f(0,1,0);
-  glVertex3f(-100,0.1,-100);
-  glVertex3f(-100,0.1,0);         //a green surroundings
-  glVertex3f(100,0.1,0);
-  glVertex3f(100,0.1,-100);
-
-  glColor3f(0.7,0.7,0.7);
-  glVertex3f(-100,0.1,0);
-  glVertex3f(-100,0.1,0.45);         //a long road
-  glVertex3f(100,0.1,0.45);
-  glVertex3f(100,0.1,0);
-
-  glColor3f(1.0,0.75,0.0);
-  glVertex3f(-100,0.1,0.45);       //a median
-  glVertex3f(-100,0.1,0.55);
-  glVertex3f(100,0.1,0.55);
-  glVertex3f(100,0.1,0.45);
-
-  glColor3f(0.7,0.7,0.7);
-  glVertex3f(-100,0.1,0.55);
-  glVertex3f(-100,0.1,1);         //a long road
-  glVertex3f(100,0.1,1);
-  glVertex3f(100,0.1,0.55);
-
-  glColor3f(0,1,0);
-  glVertex3f(-100,0.1,1);
-  glVertex3f(-100,0.1,100);         //a green surroundings
-  glVertex3f(100,0.1,100);
-  glVertex3f(100,0.1,1);
+  genRoads();
   glPopMatrix();
   glEnd();
 
   glPushMatrix();
   glTranslatef(xw,0,0);
   glColor3f(0.5,.2,0.3);
-  glBegin(GL_QUADS);
-  for(i=0; i<200; i+=0.2) {
-    glVertex3f(-100+i,0,1);
-    glVertex3f(-99.9+i,0,1);
-    glVertex3f(-99.9+i,0.2,1);
-    glVertex3f(-100+i,0.2,1);
-    i+=0.5;
-  }
-  for(i=0; i<200; i+=0.2) {
-    glVertex3f(-100+i,0,0);
-    glVertex3f(-99.9+i,0,0);
-    glVertex3f(-99.9+i,0.2,0);
-    glVertex3f(-100+i,0.2,0);
-    i+=0.5;
-  }
-  glEnd();
   glPopMatrix();
 
   //*************************************************************
+  glTranslatef(carx, cary, carz);
   drawCar();
+  glTranslatef(-carx, -cary, -carz);
+
   glTranslatef(0,3,-5);
   cylinderBuilding();
   glTranslatef(-0,-3,5);
@@ -177,6 +149,75 @@ GLvoid DrawGLScene() {
   glutSwapBuffers();
 
   cRot++;
+}
+
+
+    /*
+    glColor3f(0,1,0);
+    glVertex3f(-100,0.1,-100);
+    glVertex3f(-100,0.1,0);         //a green surroundings
+    glVertex3f(100,0.1,0);
+    glVertex3f(100,0.1,-100);
+
+    glColor3f(0.7,0.7,0.7);
+    glVertex3f(-100,0.1,0);
+    glVertex3f(-100,0.1,0.45);         //a long road
+    glVertex3f(100,0.1,0.45);
+    glVertex3f(100,0.1,0);
+
+    glColor3f(1.0,0.75,0.0);
+    glVertex3f(-100,0.1,0.45);       //a median
+    glVertex3f(-100,0.1,0.55);
+    glVertex3f(100,0.1,0.55);
+    glVertex3f(100,0.1,0.45);
+
+    glColor3f(0.7,0.7,0.7);
+    glVertex3f(-100,0.1,0.55);
+    glVertex3f(-100,0.1,1);         //a long road
+    glVertex3f(100,0.1,1);
+    glVertex3f(100,0.1,0.55);
+
+    glColor3f(0,1,0);
+    glVertex3f(-100,0.1,1);
+    glVertex3f(-100,0.1,100);         //a green surroundings
+    glVertex3f(100,0.1,100);
+    glVertex3f(100,0.1,1);
+    */
+
+void genRoads() {
+  int i, j, k;
+  float interSize = 1;
+  for (k = 0; k < 2; k++) {
+    for (i = 0; i < 20; i++) {
+      for (j = 0; j < 20; j++) {
+        glBegin(GL_QUADS);
+        glColor3f(0.7, 0.7, 0.7);
+        glVertex3f(-10 + (j * (20 + interSize)),0,0 + (i * (20 + interSize)));
+        glVertex3f(-10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));         //a long road
+        glVertex3f(10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));
+        glVertex3f(10 + (j * (20 + interSize)),0,0 + (i * (20 + interSize)));
+
+        glColor3f(1.0,0.75,0.0);
+        glVertex3f(-10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));       //a median
+        glVertex3f(-10 + (j * (20 + interSize)),0,0.55 + (i * (20 + interSize)));
+        glVertex3f(10 + (j * (20 + interSize)),0,0.55 + (i * (20 + interSize)));
+        glVertex3f(10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));
+
+        glColor3f(0.7,0.7,0.7);
+        glVertex3f(-10 + (j * (20 + interSize)), 0, 0.55 + (i * (20 + interSize)));
+        glVertex3f(-10 + (j * (20 + interSize)), 0, 1 + (i * (20 + interSize)));         //a long road
+        glVertex3f(10 + (j * (20 + interSize)), 0, 1 + (i * (20 + interSize)));
+        glVertex3f(10 + (j * (20 + interSize)), 0, 0.55 + (i * (20 + interSize)));
+        glEnd();
+      }
+    }
+    glPushMatrix();
+    glRotatef(-90, 0, 1, 0);
+    glRotatef(180, 1, 0, 0);
+    glTranslatef(10 + interSize, 0, 10);
+  }
+  glPopMatrix();
+  glLoadIdentity();
 }
 
 void NormalKey(GLubyte key, GLint x, GLint y) {
@@ -615,11 +656,13 @@ static void SpecialKeyFunc( int Key, int x, int y ) {
   case GLUT_KEY_RIGHT:
     angle+=5;
     xw+=0.2;
+    carx+=0.2;
     glutPostRedisplay();
     break;
   case GLUT_KEY_LEFT:
     angle+=5;
     xw-=0.2;
+    carx-=0.2;
     glutPostRedisplay();
     break;
   default:
