@@ -29,8 +29,8 @@ int facing = 0;
 int turnDir = -1;
 
 float eyex = -10.0f;
-float eyey = 10.0f;
-float eyez = -10.0f;
+float eyey = 3.0f;
+float eyez = 0.0f;
 
 float carx = 0.0f;
 float cary = 0.0f;
@@ -135,25 +135,29 @@ GLvoid DrawGLScene() {
 
   //*************************************************************
 
+  glPushMatrix();
   glTranslatef(carx, cary, carz);
   glRotatef(0 + (90 * facing), 0, 1, 0);
+  glTranslatef(-1.15, 0, -0.4);
   drawCar();
-  glRotatef(-(0 + (90 * facing)), 0, 1, 0);
-  glTranslatef(-carx, -cary, -carz);
+  glPopMatrix();
 
+  glPushMatrix();
   glTranslatef(0,3,-5);
   cylinderBuilding();
-  glTranslatef(-0,-3,5);
+  glPopMatrix();
 
+  glPushMatrix();
   glTranslatef(5,1,3);
   squareBuilding();
-  glTranslatef(-5,-1,-3);
+  glPopMatrix();
 
+  glPushMatrix();
   glTranslatef(-15,1,-10);
   sphereBuilding();
   glTranslatef(15,-1,-0);
-
   glPopMatrix();
+
   glEnable(GL_DEPTH_TEST);
   glutPostRedisplay();
   glutSwapBuffers();
@@ -261,6 +265,7 @@ void genRoads() {
   glTranslatef(-(10 + interSize), 0, -10);
   glRotatef(-180, 1, 0, 0);
   glRotatef(90, 0, 1, 0);
+  glPopMatrix();
 }
 
 void NormalKey(GLubyte key, GLint x, GLint y) {
@@ -316,11 +321,12 @@ void NormalKey(GLubyte key, GLint x, GLint y) {
 }
 
 void sphereBuilding() {
+  glPushMatrix();
+
   glBegin(GL_QUADS);
   glColor3f(0,0,0);
   glutSolidSphere(1,20,20);
 
-  glRotatef(180, 1.0, 0.0, 0.0);
   glRotatef(cRot,0.0f,1.0f,0.0f);
   glTranslatef(0,0.8,0.5);
 
@@ -333,13 +339,11 @@ void sphereBuilding() {
   gluCylinder(t,0,0.2,0,10,10); //Bottom
   glEnd();
 
-  glTranslatef(0,0,-0.2);
-  glRotatef(-45,-1,0,0);
-  glTranslatef(0,-0.8,-0.5);
-  glRotatef(-cRot, 0.0f, 1.0f, 0.0f);
+  glPopMatrix();
 }
 
 void cylinderBuilding() {
+  glPushMatrix();
   // cylinder
   glColor3f(1, 0, 0);
   glRotatef(90.0, 1.0, 0.0, 0.0); //x
@@ -352,11 +356,12 @@ void cylinderBuilding() {
   glEnd();
   //glPopMatrix();
 
-  glRotatef(-cRot, 0, 0, 1); //y
-  glRotatef(-90.0, 1.0, 0.0, 0.0); //x
+  glPopMatrix();
 }
 
 void squareBuilding() {
+  glPushMatrix();
+
   glBegin(GL_QUADS);
   glColor3f(0.2,0.2,0.2);
   glutSolidCube(2);
@@ -379,12 +384,7 @@ void squareBuilding() {
 
   glEnd();
 
-  glTranslatef(1.3,1,0.5);
-  glTranslatef(-1.43,0.19,-0);
-  glRotatef(45,0,0,1);
-  glRotatef(90,1,0,0);
-  glTranslatef(1.43,0,0);
-  glTranslatef(-0.76,0,0);
+  glPopMatrix();
 }
 
 void drawCar() {
