@@ -187,27 +187,29 @@ GLvoid DrawGLScene() {
 void genRoads() {
   int i, j, k;
   float interSize = 1;
-  for (k = 0; k < 2; k++) {
-    for (i = 0; i < 20; i++) {
-      for (j = 0; j < 20; j++) {
+
+  // generate roads
+  for (i = 0; i < 2; i++) {
+    for (j = 0; j < 20; j++) {
+      for (k = 0; k < 20; k++) {
         glBegin(GL_QUADS);
         glColor3f(0.7, 0.7, 0.7);
-        glVertex3f(-10 + (j * (20 + interSize)),0,0 + (i * (20 + interSize)));
-        glVertex3f(-10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));         //a long road
-        glVertex3f(10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));
-        glVertex3f(10 + (j * (20 + interSize)),0,0 + (i * (20 + interSize)));
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 0 +    (j * (20 + interSize)));
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 0.45 + (j * (20 + interSize)));         //a long road
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 0.45 + (j * (20 + interSize)));
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 0 +    (j * (20 + interSize)));
 
         glColor3f(1.0,0.75,0.0);
-        glVertex3f(-10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));       //a median
-        glVertex3f(-10 + (j * (20 + interSize)),0,0.55 + (i * (20 + interSize)));
-        glVertex3f(10 + (j * (20 + interSize)),0,0.55 + (i * (20 + interSize)));
-        glVertex3f(10 + (j * (20 + interSize)),0,0.45 + (i * (20 + interSize)));
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 0.45 + (j * (20 + interSize)));       //a median
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 0.55 + (j * (20 + interSize)));
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 0.55 + (j * (20 + interSize)));
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 0.45 + (j * (20 + interSize)));
 
         glColor3f(0.7,0.7,0.7);
-        glVertex3f(-10 + (j * (20 + interSize)), 0, 0.55 + (i * (20 + interSize)));
-        glVertex3f(-10 + (j * (20 + interSize)), 0, 1 + (i * (20 + interSize)));         //a long road
-        glVertex3f(10 + (j * (20 + interSize)), 0, 1 + (i * (20 + interSize)));
-        glVertex3f(10 + (j * (20 + interSize)), 0, 0.55 + (i * (20 + interSize)));
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 0.55 + (j * (20 + interSize)));
+        glVertex3f(-10 + (k * (20 + interSize)), 0, 1 +    (j * (20 + interSize)));         //a long road
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 1 +    (j * (20 + interSize)));
+        glVertex3f( 10 + (k * (20 + interSize)), 0, 0.55 + (j * (20 + interSize)));
         glEnd();
       }
     }
@@ -218,6 +220,10 @@ void genRoads() {
   }
   glPopMatrix();
   glLoadIdentity();
+
+  // generate intersections
+
+  for
 }
 
 void NormalKey(GLubyte key, GLint x, GLint y) {
