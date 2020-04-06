@@ -77,7 +77,7 @@ void draw2() {
   glColor3f(1, 0, 0);
   glTranslatef(0, 3, -3);
   glRotatef(90.0, 1.0, 0.0, 0.0); //x
-  gluCylinder(t, 1, 1, 3, 10, 10);
+  gluCylinder(t, 1, 1, 3, 64, 64);
 
   // cube at top
   glRotatef(rot++, 0, 0, 1); //y
