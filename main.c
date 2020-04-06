@@ -258,6 +258,30 @@ void cylinderBuilding() {
   //glPopMatrix();
 }
 
+void squareBuilding() {
+  glBegin(GL_QUADS);
+  glColor3f(0.2,0.2,0.2);
+  glutSolidCube(2);
+
+  glColor3f(0.1,0.1,1);
+  glTranslatef(0.76,0,0);
+  glutSolidCube(0.5);
+
+  glTranslatef(-1.43,0,0);
+
+  glRotatef(90,1,0,0);
+  glRotatef(45,0,0,1);
+  gluCylinder(t,0.5,0.5,0.2,4,10);
+
+  glTranslatef(1.43,-0.19,0);
+  gluCylinder(t,0.2,0.2,0.5,4,10);
+
+  glTranslatef(-1.3,-1,-0.5);
+  gluCylinder(t,0.4,0.4,0.8,4,10);
+
+  glEnd();
+}
+
 void drawCar() {
   glColor3f(1.0,.75,0.0);
   glPointSize(30.0);
@@ -561,30 +585,6 @@ void drawCar() {
   glVertex3f( 0.2f,  0.35f, 0.45f);
   glTexCoord2f(0.005f, 0.005f);
   glVertex3f( 0.2f, 0.25f, 0.45f);
-  glEnd();
-}
-
-void squareBuilding() {
-  glBegin(GL_QUADS);
-  glColor3f(0.2,0.2,0.2);
-  glutSolidCube(2);
-
-  glColor3f(0.1,0.1,1);
-  glTranslatef(0.76,0,0);
-  glutSolidCube(0.5);
-
-  glTranslatef(-1.43,0,0);
-
-  glRotatef(90,1,0,0);
-  glRotatef(45,0,0,1);
-  gluCylinder(t,0.5,0.5,0.2,4,10);
-
-  glTranslatef(1.43,-0.19,0);
-  gluCylinder(t,0.2,0.2,0.5,4,10);
-
-  glTranslatef(-1.3,-1,-0.5);
-  gluCylinder(t,0.4,0.4,0.8,4,10);
-
   glEnd();
 }
 
