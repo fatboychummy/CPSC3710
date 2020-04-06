@@ -24,6 +24,7 @@ GLint nml = 0;
 GLfloat xt = 0.0, yt = 0.0, zt = 0.0, xw = 0.0;
 GLfloat xs = 1.0, ys = 1.0, zs = 1.0;
 GLfloat xangle = 5.0, yangle = 0.0, zangle = 0.0, angle = 0.0;
+GLfloat rot = 0;
 
 GLfloat r = 0, g = 0, b = 1;
 GLUquadricObj *t;
@@ -69,6 +70,20 @@ void init() {
   glLoadIdentity();
   glOrtho(0.0, 900.0, 0.0, 600.0, 50.0, -50.0);
   glutPostRedisplay();
+}
+
+void draw2() {
+  // cylinder
+  glColor3f(1, 0, 0);
+  glTranslatef(0, 3, -3);
+  glRotatef(90.0, 1.0, 0.0, 0.0); //x
+  gluCylinder(t, 1, 1, 3, 10, 10);
+
+  // cube at top
+  glRotatef(rot++, 0, 0, 1); //y
+  glutSolidCube(2);
+
+  glPopMatrix();
 }
 
 GLvoid DrawGLScene() {
@@ -332,6 +347,7 @@ GLvoid DrawGLScene() {
   glPopMatrix();
 
   glBegin(GL_TRIANGLES);                /* start drawing the cube.*/
+
   /* top of cube*/
   glColor3f(0.3, 0.3, 0.3);
   glVertex3f(0.6, 0.5, 0.6);
@@ -405,7 +421,10 @@ GLvoid DrawGLScene() {
   glPopMatrix();
 
   //*************************************************************
+  draw2();
   glPopMatrix();
+
+
   glEnable(GL_DEPTH_TEST);
   glutPostRedisplay();
   glutSwapBuffers();
