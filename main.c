@@ -161,10 +161,15 @@ GLvoid DrawGLScene() {
   drawCar();
   glTranslatef(0,3,-5);
   cylinderBuilding();
-  glTranslatef(5,0,0);
+  glTranslatef(-0,-3,5);
+
+  glTranslatef(5,1,3);
   squareBuilding();
-  glTranslatef(-15,0,0);
+  glTranslatef(-5,-1,-3);
+
+  glTranslatef(-15,1,-10);
   sphereBuilding();
+  glTranslatef(15,-1,-0);
 
   glPopMatrix();
   glEnable(GL_DEPTH_TEST);
@@ -231,6 +236,7 @@ void sphereBuilding() {
   glColor3f(0,0,0);
   glutSolidSphere(1,20,20);
 
+  glRotatef(180, 1.0, 0.0, 0.0);
   glRotatef(cRot,0.0f,1.0f,0.0f);
   glTranslatef(0,0.8,0.5);
 
@@ -242,6 +248,11 @@ void sphereBuilding() {
   glTranslatef(0,0,0.2);
   gluCylinder(t,0,0.2,0,10,10); //Bottom
   glEnd();
+
+  glTranslatef(0,0,-0.2);
+  glRotatef(-45,-1,0,0);
+  glTranslatef(0,-0.8,-0.5);
+  glRotatef(-cRot, 0.0f, 1.0f, 0.0f);
 }
 
 void cylinderBuilding() {
@@ -256,6 +267,9 @@ void cylinderBuilding() {
 
   glEnd();
   //glPopMatrix();
+
+  glRotatef(-cRot, 0, 0, 1); //y
+  glRotatef(-90.0, 1.0, 0.0, 0.0); //x
 }
 
 void squareBuilding() {
@@ -280,9 +294,17 @@ void squareBuilding() {
   gluCylinder(t,0.4,0.4,0.8,4,10);
 
   glEnd();
+
+  glTranslatef(1.3,1,0.5);
+  glTranslatef(-1.43,0.19,-0);
+  glRotatef(45,0,0,1);
+  glRotatef(90,1,0,0);
+  glTranslatef(1.43,0,0);
+  glTranslatef(-0.76,0,0);
 }
 
 void drawCar() {
+
   glColor3f(1.0,.75,0.0);
   glPointSize(30.0);
   glBegin(GL_POINTS);
