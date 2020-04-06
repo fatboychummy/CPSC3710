@@ -7,6 +7,7 @@
 #include <GL/glut.h>
 #include <stdlib.h>
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glut.h>
@@ -21,9 +22,15 @@ GLint Xsize = 1000;
 GLint Ysize = 800;
 GLint nml = 0;
 
-float eyex = -30.0f;
-float eyey = 30.0f;
-float eyez = -30.0f;
+bool turning = false;
+bool atIntersection = false;
+
+int facing = 0;
+int turnDir = -1;
+
+float eyex = -10.0f;
+float eyey = 10.0f;
+float eyez = -10.0f;
 
 float carx = 0.0f;
 float cary = 0.0f;
@@ -122,13 +129,16 @@ GLvoid DrawGLScene() {
   glEnd();
 
   glPushMatrix();
-  glTranslatef(xw,0,0);
-  glColor3f(0.5,.2,0.3);
+  //glTranslatef(xw,0,0);
+  //glColor3f(0.5,.2,0.3);
   glPopMatrix();
 
   //*************************************************************
+
   glTranslatef(carx, cary, carz);
+  glRotatef(0 + (90 * facing), 0, 1, 0);
   drawCar();
+  glRotatef(-(0 + (90 * facing)), 0, 1, 0);
   glTranslatef(-carx, -cary, -carz);
 
   glTranslatef(0,3,-5);
@@ -152,37 +162,37 @@ GLvoid DrawGLScene() {
 }
 
 
-    /*
-    glColor3f(0,1,0);
-    glVertex3f(-100,0.1,-100);
-    glVertex3f(-100,0.1,0);         //a green surroundings
-    glVertex3f(100,0.1,0);
-    glVertex3f(100,0.1,-100);
+/*
+glColor3f(0,1,0);
+glVertex3f(-100,0.1,-100);
+glVertex3f(-100,0.1,0);         //a green surroundings
+glVertex3f(100,0.1,0);
+glVertex3f(100,0.1,-100);
 
-    glColor3f(0.7,0.7,0.7);
-    glVertex3f(-100,0.1,0);
-    glVertex3f(-100,0.1,0.45);         //a long road
-    glVertex3f(100,0.1,0.45);
-    glVertex3f(100,0.1,0);
+glColor3f(0.7,0.7,0.7);
+glVertex3f(-100,0.1,0);
+glVertex3f(-100,0.1,0.45);         //a long road
+glVertex3f(100,0.1,0.45);
+glVertex3f(100,0.1,0);
 
-    glColor3f(1.0,0.75,0.0);
-    glVertex3f(-100,0.1,0.45);       //a median
-    glVertex3f(-100,0.1,0.55);
-    glVertex3f(100,0.1,0.55);
-    glVertex3f(100,0.1,0.45);
+glColor3f(1.0,0.75,0.0);
+glVertex3f(-100,0.1,0.45);       //a median
+glVertex3f(-100,0.1,0.55);
+glVertex3f(100,0.1,0.55);
+glVertex3f(100,0.1,0.45);
 
-    glColor3f(0.7,0.7,0.7);
-    glVertex3f(-100,0.1,0.55);
-    glVertex3f(-100,0.1,1);         //a long road
-    glVertex3f(100,0.1,1);
-    glVertex3f(100,0.1,0.55);
+glColor3f(0.7,0.7,0.7);
+glVertex3f(-100,0.1,0.55);
+glVertex3f(-100,0.1,1);         //a long road
+glVertex3f(100,0.1,1);
+glVertex3f(100,0.1,0.55);
 
-    glColor3f(0,1,0);
-    glVertex3f(-100,0.1,1);
-    glVertex3f(-100,0.1,100);         //a green surroundings
-    glVertex3f(100,0.1,100);
-    glVertex3f(100,0.1,1);
-    */
+glColor3f(0,1,0);
+glVertex3f(-100,0.1,1);
+glVertex3f(-100,0.1,100);         //a green surroundings
+glVertex3f(100,0.1,100);
+glVertex3f(100,0.1,1);
+*/
 
 void genRoads() {
   int i, j, k;
@@ -213,17 +223,44 @@ void genRoads() {
         glEnd();
       }
     }
-    glPushMatrix();
-    glRotatef(-90, 0, 1, 0);
-    glRotatef(180, 1, 0, 0);
-    glTranslatef(10 + interSize, 0, 10);
+    if (i < 1) { // only run on the first iteration
+      glPushMatrix();
+      glRotatef(-90, 0, 1, 0);
+      glRotatef(180, 1, 0, 0);
+      glTranslatef(10 + interSize, 0, 10);
+    }
   }
+
+  // reverse translations
+  glTranslatef(-(10 + interSize), 0, -10);
+  glRotatef(-180, 1, 0, 0);
+  glRotatef(90, 0, 1, 0);
+
   glPopMatrix();
-  glLoadIdentity();
 
   // generate intersections
-
-  for
+  for (i = 0; i < 2; i++) {
+    for (j = 0; j < 20; j++) {
+      for (k = 0; k < 20; k++) {
+        glBegin(GL_QUADS);
+        glColor3f(0.7,0.7,0.7);
+        glVertex3f(10 + (k * (20 + interSize)), 0, 0 + (j * (20 + interSize)));
+        glVertex3f(10 + (k * (20 + interSize)), 0, 1 + (j * (20 + interSize)));
+        glVertex3f(11 + (k * (20 + interSize)), 0, 1 + (j * (20 + interSize)));
+        glVertex3f(11 + (k * (20 + interSize)), 0, 0 + (j * (20 + interSize)));
+        glEnd();
+      }
+    }
+    if (i < 1) { // only run on the first iteration
+      glPushMatrix();
+      glRotatef(-90, 0, 1, 0);
+      glRotatef(180, 1, 0, 0);
+      glTranslatef(10 + interSize, 0, 10);
+    }
+  }
+  glTranslatef(-(10 + interSize), 0, -10);
+  glRotatef(-180, 1, 0, 0);
+  glRotatef(90, 0, 1, 0);
 }
 
 void NormalKey(GLubyte key, GLint x, GLint y) {
@@ -526,6 +563,7 @@ void drawCar() {
   glVertex3f(1.7,0.65,0.2);        //quad back window
   glVertex3f(1.8,0.5,0.2);
   glVertex3f(1.8,0.5,0.6);
+  glEnd();
   glBegin(GL_TRIANGLES);                /* start drawing the cube.*/
   /* top of cube*/
   glColor3f(0.3,0.3,0.3);
@@ -584,7 +622,9 @@ void drawCar() {
     glVertex3f(1.7+(0.08*(cos(((theta+angle)*3.14)/180))),0.2+(0.08*(sin(((theta+angle)*3.14)/180))),0.62);
   }
   glEnd();
+  glPopMatrix();
 
+  glPushMatrix();
   glTranslatef(0.6,0.2,0.6);
   glColor3f(0,0,0);
   glutSolidTorus(0.025,0.07,10,25);
@@ -633,6 +673,7 @@ void drawCar() {
   glPopMatrix();
 
   /********************REARLIGHTS***************************/
+  glPushMatrix();
   glColor3f(1.0,0.0,0.0);
   glTranslatef(1.9,0,0);
   glPointSize(30.0);
@@ -640,6 +681,7 @@ void drawCar() {
   glVertex3f(0.2,0.3,0.3);
   glVertex3f(0.2,0.3,0.5);
   glEnd();
+  glPopMatrix();
 
   /*******************LICENSE*PLATE************************/
   char text[] = "CPSC 3710";
@@ -659,17 +701,57 @@ void drawCar() {
 
 static void SpecialKeyFunc( int Key, int x, int y ) {
   switch (Key) {
+  case GLUT_KEY_DOWN:
+    switch (facing) {
+    case 0:
+      carx += 0.2;
+      break;
+    case 1:
+      carz -= 0.2;
+      break;
+    case 2:
+      carx -= 0.2;
+      break;
+    case 3:
+      carz += 0.2;
+      break;
+    default:
+      printf("Error attempting to move: Facing is %d", facing);
+    }
+    //glutPostRedisplay();
+    break;
+  case GLUT_KEY_UP:
+    switch (facing) {
+    case 0:
+      carx -= 0.2;
+      break;
+    case 1:
+      carz += 0.2;
+      break;
+    case 2:
+      carx += 0.2;
+      break;
+    case 3:
+      carz -= 0.2;
+      break;
+    default:
+      printf("Error attempting to move: Facing is %d", facing);
+    }
+    //glutPostRedisplay();
+    break;
   case GLUT_KEY_RIGHT:
-    angle+=5;
-    xw+=0.2;
-    carx+=0.2;
-    glutPostRedisplay();
+    if (!turning) {
+      facing = (facing - 1) % 4;
+      if (facing < 0)
+        facing = 3;
+    }
     break;
   case GLUT_KEY_LEFT:
-    angle+=5;
-    xw-=0.2;
-    carx-=0.2;
-    glutPostRedisplay();
+    if (!turning) {
+      facing = (facing + 1) % 4;
+      if (facing > 3)
+        facing = 0;
+    }
     break;
   default:
     break;
