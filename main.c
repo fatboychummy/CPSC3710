@@ -25,6 +25,11 @@ GLint nml = 0;
 bool turning = false;
 bool atIntersection = false;
 
+bool forwardDown = false;
+bool backDown = false;
+bool leftDown = false;
+bool rightDown = false;
+
 int facing = 0;
 int turnDir = 0;
 
@@ -152,6 +157,62 @@ GLvoid DrawGLScene() {
   } else {
     turnRot = 0 + (90 * facing);
     glRotatef(turnRot, 0, 1, 0);
+
+    float fS = 0.07;
+    float bS = 0.015;
+    if (forwardDown) {
+      switch (facing) {
+      case 0:
+        carx -= fS;
+        break;
+      case 1:
+        carz += fS;
+        break;
+      case 2:
+        carx += fS;
+        break;
+      case 3:
+        carz -= fS;
+        break;
+      default:
+        printf("Error attempting to move: Facing is %d", facing);
+      }
+    } else if (backDown) {
+      switch (facing) {
+      case 0:
+        carx += bS;
+        break;
+      case 1:
+        carz -= bS;
+        break;
+      case 2:
+        carx -= bS;
+        break;
+      case 3:
+        carz += bS;
+        break;
+      default:
+        printf("Error attempting to move: Facing is %d", facing);
+      }
+    }
+    /*
+    switch (facing) {
+      case 0:
+        carx -= 0.2;
+        break;
+      case 1:
+        carz += 0.2;
+        break;
+      case 2:
+        carx += 0.2;
+        break;
+      case 3:
+        carz -= 0.2;
+        break;
+      default:
+        printf("Error attempting to move: Facing is %d", facing);
+      }
+      */
   }
   glTranslatef(-1.15, 0, -0.4);
   drawCar();
@@ -662,6 +723,16 @@ void drawCar() {
   glEnd();
 }
 
+void NormalKeyUp(GLubyte key, GLint x, GLint y) {
+  switch (key) {
+  case 'i': // forward
+    forwardDown = false;
+    break;
+  case 'k': // back
+    backDown = false;
+  }
+}
+
 void NormalKey(GLubyte key, GLint x, GLint y) {
   switch (key)    {
   case ESCAPE :
@@ -669,45 +740,19 @@ void NormalKey(GLubyte key, GLint x, GLint y) {
     glutDestroyWindow(window);
     exit(0);
     break;
-  case 'x':
-    xangle += 5.0;
-    glutPostRedisplay();
+  case 'i': // forward
+    forwardDown = true;
     break;
-  case 'X':
-    xangle -= 5.0;
-    glutPostRedisplay();
+  case 'k': // backward
+    backDown = true;
     break;
-  case 'y':
-    yangle += 5.0;
-    glutPostRedisplay();
+  case 'j': // left
+    turning = true;
+    turnDir = 1;
     break;
-  case 'Y':
-    yangle -= 5.0;
-    glutPostRedisplay();
-    break;
-  case 'z':
-    zangle += 5.0;
-    glutPostRedisplay();
-    break;
-  case 'Z':
-    zangle -= 5.0;
-    glutPostRedisplay();
-    break;
-  case 'u':                          /* Move up */
-    yt += 0.2;
-    glutPostRedisplay();
-    break;
-  case 'U':
-    yt -= 0.2;                      /* Move down */
-    glutPostRedisplay();
-    break;
-  case 'f':                          /* Move forward */
-    zt += 0.2;
-    glutPostRedisplay();
-    break;
-  case 'F':
-    zt -= 0.2;                      /* Move away */
-    glutPostRedisplay();
+  case 'l': // right
+    turning = true;
+    turnDir = -1;
     break;
   default:
     break;
@@ -715,68 +760,7 @@ void NormalKey(GLubyte key, GLint x, GLint y) {
 }
 
 static void SpecialKeyFunc( int Key, int x, int y ) {
-  if (!turning) {
-    switch (Key) {
-    case GLUT_KEY_DOWN:
-      switch (facing) {
-      case 0:
-        carx += 0.2;
-        break;
-      case 1:
-        carz -= 0.2;
-        break;
-      case 2:
-        carx -= 0.2;
-        break;
-      case 3:
-        carz += 0.2;
-        break;
-      default:
-        printf("Error attempting to move: Facing is %d", facing);
-      }
-      //glutPostRedisplay();
-      break;
-    case GLUT_KEY_UP:
-      switch (facing) {
-      case 0:
-        carx -= 0.2;
-        break;
-      case 1:
-        carz += 0.2;
-        break;
-      case 2:
-        carx += 0.2;
-        break;
-      case 3:
-        carz -= 0.2;
-        break;
-      default:
-        printf("Error attempting to move: Facing is %d", facing);
-      }
-      //glutPostRedisplay();
-      break;
-    case GLUT_KEY_RIGHT:
-      turning = true;
-      turnDir = -1;
-        /*
-        facing = (facing - 1) % 4;
-        if (facing < 0)
-          facing = 3;
-        */
-      break;
-    case GLUT_KEY_LEFT:
-      turning = true;
-      turnDir = 1;
-        /*
-        facing = (facing + 1) % 4;
-        if (facing > 3)
-          facing = 0;
-        */
-      break;
-    default:
-      break;
-    }
-  }
+
 }
 
 void colorMenu(int id) {
@@ -833,6 +817,7 @@ int main(int argc, char **argv) {
   init();
   glutDisplayFunc(DrawGLScene);
   glutKeyboardFunc(NormalKey);
+  glutKeyboardUpFunc(NormalKeyUp);
   glutSpecialFunc(SpecialKeyFunc);
   InitGL(Xsize,Ysize);
 
