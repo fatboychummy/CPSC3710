@@ -17,6 +17,21 @@
 
 #define ESCAPE 27
 
+typedef enum {
+  BEHIND,
+  RIGHT,
+  LEFT,
+  RESET,
+  BR,
+  FR,
+  FL,
+  BL,
+  DBR,
+  DFR,
+  DFL,
+  DBL
+} CameraAngle;
+
 GLint window;
 GLint window2;
 GLint Xsize = 1000;
@@ -24,7 +39,8 @@ GLint Ysize = 800;
 GLint nml = 0;
 
 bool turning = false;
-bool atIntersection = false;
+
+int times = 0; // integer flag to fix rotation
 
 bool forwardDown = false;
 bool backDown = false;
@@ -35,26 +51,30 @@ bool r1[200];
 bool r2[200];
 bool r3[200];
 
-int facing = 0;
+int facing = 2;
+int tfacing = 0;
 int turnDir = 0;
 
 float turnRot = 0;
+float cS = 0.0325;
 
-float eyex = -10.0f;
-float eyey = 3.0f;
+float eyex = 3.0f;
+float eyey = 1.0f;
 float eyez = 0.0f;
 
 float eyeTx = -10.0f;
 float eyeTy = 3.0f;
 float eyeTz = 0.0f;
 
-float carx = 0.0f;
+float carx = 0.2f;
 float cary = 0.0f;
-float carz = 0.0f;
+float carz = 0.5f;
 float carOy = 0.5f;
 
 float interSize = 1;
 float roadSize = 10;
+
+CameraAngle cam = RESET;
 
 GLfloat xt = 0.0, yt = 0.0, zt = 0.0, xw = 0.0;
 GLfloat xs = 1.0, ys = 1.0, zs = 1.0;
@@ -121,6 +141,156 @@ GLvoid DrawGLScene() {
 
   // camera stuff
 
+  //*************************************************************************
+  // Camera positions for all angles
+  //*************************************************************************
+  switch (cam) {
+  case BEHIND:
+    switch (tfacing) {
+    case 0:
+      eyeTx = 3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+
+    case 1:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = -3.0f;
+      break;
+
+    case 2:
+      eyeTx = -3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+
+    case 3:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = 3.0f;
+      break;
+    }
+
+    break;
+
+  case RIGHT:
+    switch (tfacing) {
+    case 0:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = 3.0f;
+      break;
+
+    case 1:
+      eyeTx = 3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+
+    case 2:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = -3.0f;
+      break;
+
+    case 3:
+      eyeTx = -3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+    }
+
+    break;
+
+  case LEFT:
+    switch (tfacing) {
+    case 0:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = -3.0f;
+      break;
+
+    case 1:
+      eyeTx = -3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+
+    case 2:
+      eyeTx = 0.0f;
+      eyeTy = 1.0f;
+      eyeTz = 3.0f;
+      break;
+
+    case 3:
+      eyeTx = 3.0f;
+      eyeTy = 1.0f;
+      eyeTz = 0.0f;
+      break;
+    }
+
+    break;
+  }
+
+
+  //*************************************************************************
+  // Smooth camera handling, attempt to get eyex/eyey/eyez to target positions
+  //*************************************************************************
+  bool bx1 = false;
+  bool bx2 = false;
+  bool by1 = false;
+  bool by2 = false;
+  bool bz1 = false;
+  bool bz2 = false;
+
+  if (eyex < eyeTx - 0.1) {
+    eyex += cS;
+  } else {
+    bx1 = true;
+  }
+
+  if (eyey < eyeTy - 0.1) {
+    eyey += cS;
+  } else {
+    by1 = true;
+  }
+
+  if (eyez < eyeTz - 0.1) {
+    eyez += cS;
+  } else {
+    bz1 = true;
+  }
+
+  if (eyex > eyeTx + 0.1) {
+    eyex -= cS;
+  } else {
+    bx2 = true;
+  }
+
+  if (eyey > eyeTy + 0.1) {
+    eyey -= cS;
+  } else {
+    by2 = true;
+  }
+
+  if (eyez > eyeTz + 0.1) {
+    eyez -= cS;
+  } else {
+    bz2 = true;
+  }
+
+  if (bx1 && bx2)
+    eyex = eyeTx;
+
+  if (by1 && by2)
+    eyey = eyeTy;
+
+  if (bz1 && bz2)
+    eyez = eyeTz;
+
+  //*************************************************************************
+
   gluLookAt (eyex + carx, eyey + cary, eyez + carz, carx, cary + carOy, carz, 0, 1, 0);
 
   glEnable (GL_COLOR_MATERIAL);
@@ -158,12 +328,22 @@ GLvoid DrawGLScene() {
   if (turning) {
     glRotatef (turnRot, 0, 1, 0);
     turnRot += turnDir;
+    tfacing = (facing + turnDir) % 4;
+
+    if (tfacing < 0)
+      tfacing = 3;
 
     // detect if finished rotation
     float min = (90 * (facing + turnDir) ) - 1;
     float max = (90 * (facing + turnDir) ) + 1;
 
+    printf("%f, %f, %f\n", min, max, turnRot);
+    times += 1;
+    if (times > 120)
+      turnRot = 90 * (facing + turnDir);
+
     if (turnRot > min && turnRot < max) {
+      times = 0;
       turning = false;
       facing = (facing + turnDir) % 4;
 
@@ -181,6 +361,7 @@ GLvoid DrawGLScene() {
 
     }
   } else {
+    tfacing = facing;
     turnRot = 0 + (90 * facing);
     glRotatef (turnRot, 0, 1, 0);
 
@@ -765,6 +946,33 @@ void NormalKeyUp (GLubyte key, GLint x, GLint y) {
   }
 }
 
+bool atIntersection() {
+  printf ("X: %f\n", fmod (carx, (roadSize + 1) ) );
+  printf ("Z: %f\n", fmod (carz, (roadSize + 1) ) );
+
+  switch (facing) {
+  case 0:
+  case 2:
+    if (fmod (carx, (roadSize + interSize) ) >= 5.4 && fmod (carx, (roadSize + interSize) ) <= 5.6) {
+      return true;
+    }
+
+    break;
+
+  case 1:
+  case 3:
+    if (fmod (carz, (roadSize + interSize) ) >= 0.4 && fmod (carz, (roadSize + interSize) ) <= 0.6) {
+      return true;
+    }
+
+  default:
+    return false;
+  }
+
+
+  return false;
+}
+
 void NormalKey (GLubyte key, GLint x, GLint y) {
   switch (key)    {
   case ESCAPE :
@@ -782,13 +990,19 @@ void NormalKey (GLubyte key, GLint x, GLint y) {
     break;
 
   case 'j': // left
-    turning = true;
-    turnDir = 1;
+    if (!turning && atIntersection() ) {
+      turning = true;
+      turnDir = 1;
+    }
+
     break;
 
   case 'l': // right
-    turning = true;
-    turnDir = -1;
+    if (!turning && atIntersection() ) {
+      turning = true;
+      turnDir = -1;
+    }
+
     break;
 
   default:
@@ -796,8 +1010,57 @@ void NormalKey (GLubyte key, GLint x, GLint y) {
   }
 }
 
+// GLUT_KEY_F[1..12]
 static void SpecialKeyFunc (int Key, int x, int y) {
+  switch (Key) {
+  case GLUT_KEY_F1:
+    cam = BEHIND;
+    break;
 
+  case GLUT_KEY_F2:
+    cam = RIGHT;
+    break;
+
+  case GLUT_KEY_F3:
+    cam = LEFT;
+    break;
+
+  case GLUT_KEY_F4:
+    cam = RESET;
+    break;
+
+  case GLUT_KEY_F5:
+    cam = BR;
+    break;
+
+  case GLUT_KEY_F6:
+    cam = FR;
+    break;
+
+  case GLUT_KEY_F7:
+    cam = FL;
+    break;
+
+  case GLUT_KEY_F8:
+    cam = BL;
+    break;
+
+  case GLUT_KEY_F9:
+    cam = DBR;
+    break;
+
+  case GLUT_KEY_F10:
+    cam = DFR;
+    break;
+
+  case GLUT_KEY_F11:
+    cam = DFL;
+    break;
+
+  case GLUT_KEY_F12:
+    cam = DBL;
+    break;
+  }
 }
 
 void colorMenu (int id) {
