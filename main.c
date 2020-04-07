@@ -195,24 +195,6 @@ GLvoid DrawGLScene() {
         printf("Error attempting to move: Facing is %d", facing);
       }
     }
-    /*
-    switch (facing) {
-      case 0:
-        carx -= 0.2;
-        break;
-      case 1:
-        carz += 0.2;
-        break;
-      case 2:
-        carx += 0.2;
-        break;
-      case 3:
-        carz -= 0.2;
-        break;
-      default:
-        printf("Error attempting to move: Facing is %d", facing);
-      }
-      */
   }
   glTranslatef(-1.15, 0, -0.4);
   drawCar();
@@ -240,39 +222,6 @@ GLvoid DrawGLScene() {
 
   cRot++;
 }
-
-
-/*
-glColor3f(0,1,0);
-glVertex3f(-100,0.1,-100);
-glVertex3f(-100,0.1,0);         //a green surroundings
-glVertex3f(100,0.1,0);
-glVertex3f(100,0.1,-100);
-
-glColor3f(0.7,0.7,0.7);
-glVertex3f(-100,0.1,0);
-glVertex3f(-100,0.1,0.45);         //a long road
-glVertex3f(100,0.1,0.45);
-glVertex3f(100,0.1,0);
-
-glColor3f(1.0,0.75,0.0);
-glVertex3f(-100,0.1,0.45);       //a median
-glVertex3f(-100,0.1,0.55);
-glVertex3f(100,0.1,0.55);
-glVertex3f(100,0.1,0.45);
-
-glColor3f(0.7,0.7,0.7);
-glVertex3f(-100,0.1,0.55);
-glVertex3f(-100,0.1,1);         //a long road
-glVertex3f(100,0.1,1);
-glVertex3f(100,0.1,0.55);
-
-glColor3f(0,1,0);
-glVertex3f(-100,0.1,1);
-glVertex3f(-100,0.1,100);         //a green surroundings
-glVertex3f(100,0.1,100);
-glVertex3f(100,0.1,1);
-*/
 
 void genRoads() {
   int i, j, k;
