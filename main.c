@@ -13,6 +13,7 @@
 #include <GL/glut.h>
 #include <math.h>
 #include <string.h>
+#include <time.h>
 
 #define ESCAPE 27
 
@@ -35,9 +36,9 @@ int turnDir = 0;
 
 float turnRot = 0;
 
-float eyex = -7.0f;
-float eyey = 7.0f;
-float eyez = -7.0f;
+float eyex = -10.0f;
+float eyey = 3.0f;
+float eyez = 0.0f;
 
 float eyeTx = -10.0f;
 float eyeTy = 3.0f;
@@ -133,9 +134,11 @@ GLvoid DrawGLScene() {
   glBegin (GL_QUADS);
   //*****************************road and surrounding development***********************************
   genRoads();
-  genBuildings();
   glEnd();
 
+  glBegin(GL_QUADS);
+  genBuildings();
+  glEnd();
 
 
   glPushMatrix();
@@ -238,10 +241,58 @@ GLvoid DrawGLScene() {
 
 void genBuildings() {
   int i, j;
+  float hroad = roadSize / 2;
 
+  // create grass plots and gen buildings inside them
   for (i = 0; i < 20; i++) {
     for (j = 0; j < 20; j++) {
+      float vert1x = hroad  + (j * (roadSize + interSize) );
+      float vert2x = -hroad  + (j * (roadSize + interSize) );
+      float vert1z = i * (roadSize + interSize) + interSize;
+      float vert2z = vert1z + roadSize;
 
+      glBegin (GL_QUADS);
+
+      glColor3f (0, 1, 0);
+      glVertex3f (vert1x, 0, vert1z);
+      glVertex3f (vert2x, 0, vert1z);
+      glVertex3f (vert2x, 0, vert2z);
+      glVertex3f (vert1x, 0, vert2z);
+
+      glEnd();
+
+      // vert1x/vert2x/vert1z/vert2z are the corner vertices of plot.  Generate structures within.
+      int r1 = rand();
+      int r2 = rand();
+      int r3 = rand();
+
+      if (r1 % 5 == 0) {
+        // gen cylinder
+        glPushMatrix();
+
+        glTranslatef(vert1x + 5, 3, vert1z + 5);
+        cylinderBuilding();
+
+        glPopMatrix();
+      }
+      if (r2 % 7 == 0) {
+        // gen sphere
+        glPushMatrix();
+
+        glTranslatef(vert1x + 2, 1, vert1z + 7);
+        sphereBuilding();
+
+        glPopMatrix();
+      }
+      if (r3 % 8 == 0) {
+        // gen cube
+        glPushMatrix();
+
+        glTranslatef(vert1x + 7, 1, vert1z + 2);
+        squareBuilding();
+
+        glPopMatrix();
+      }
     }
   }
 }
@@ -788,6 +839,7 @@ void colorMenu (int id) {
 }
 
 int main (int argc, char **argv) {
+  srand(time(0));
   printf ("Car Animation Demo for CPSC3710\n");
   printf ("MOUSE\n");
   printf ("\tPRESS RIGHT BUTTON FOR MENU\n");
