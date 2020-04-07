@@ -31,6 +31,10 @@ bool backDown = false;
 bool leftDown = false;
 bool rightDown = false;
 
+bool r1[200];
+bool r2[200];
+bool r3[200];
+
 int facing = 0;
 int turnDir = 0;
 
@@ -136,7 +140,7 @@ GLvoid DrawGLScene() {
   genRoads();
   glEnd();
 
-  glBegin(GL_QUADS);
+  glBegin (GL_QUADS);
   genBuildings();
   glEnd();
 
@@ -246,8 +250,8 @@ void genBuildings() {
   // create grass plots and gen buildings inside them
   for (i = 0; i < 20; i++) {
     for (j = 0; j < 20; j++) {
-      float vert1x = hroad  + (j * (roadSize + interSize) );
-      float vert2x = -hroad  + (j * (roadSize + interSize) );
+      float vert1x = hroad + (j * (roadSize + interSize) );
+      float vert2x = -hroad + (j * (roadSize + interSize) );
       float vert1z = i * (roadSize + interSize) + interSize;
       float vert2z = vert1z + roadSize;
 
@@ -262,33 +266,32 @@ void genBuildings() {
       glEnd();
 
       // vert1x/vert2x/vert1z/vert2z are the corner vertices of plot.  Generate structures within.
-      int r1 = rand();
-      int r2 = rand();
-      int r3 = rand();
 
-      if (r1 % 5 == 0) {
+      if (r1[20 * i + j]) {
         // gen cylinder
         glPushMatrix();
 
-        glTranslatef(vert1x + 5, 3, vert1z + 5);
+        glTranslatef (vert1x + 5, 3, vert1z + 5);
         cylinderBuilding();
 
         glPopMatrix();
       }
-      if (r2 % 7 == 0) {
+
+      if (r2[20 * i + j]) {
         // gen sphere
         glPushMatrix();
 
-        glTranslatef(vert1x + 2, 1, vert1z + 7);
+        glTranslatef (vert1x + 2, 1, vert1z + 7);
         sphereBuilding();
 
         glPopMatrix();
       }
-      if (r3 % 8 == 0) {
+
+      if (r3[20 * i + j]) {
         // gen cube
         glPushMatrix();
 
-        glTranslatef(vert1x + 7, 1, vert1z + 2);
+        glTranslatef (vert1x + 7, 1, vert1z + 2);
         squareBuilding();
 
         glPopMatrix();
@@ -839,7 +842,6 @@ void colorMenu (int id) {
 }
 
 int main (int argc, char **argv) {
-  srand(time(0));
   printf ("Car Animation Demo for CPSC3710\n");
   printf ("MOUSE\n");
   printf ("\tPRESS RIGHT BUTTON FOR MENU\n");
@@ -848,6 +850,16 @@ int main (int argc, char **argv) {
   printf ("\tU-F FOR CAMERA VIEW SETTINGS\n");
   printf ("\tUSE LEFT ARROW(<-) AND RIGHT ARROW(->) TO MOVE CAR\n");
   printf ("\tESCAPE TO EXIT\n");
+
+  srand (time (0) );
+
+  int i;
+
+  for (int i = 0; i < 200; i++) {
+    r1[i] = rand() % 5 == 0 ? true : false;
+    r2[i] = rand() % 5 == 0 ? true : false;
+    r3[i] = rand() % 5 == 0 ? true : false;
+  }
 
   glutInit (&argc, argv);
   glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
