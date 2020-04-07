@@ -57,19 +57,27 @@ int turnDir = 0;
 
 float turnRot = 0;
 float cS = 0.0325;
+float accuracy = 0.1;
 
 float eyex = 3.0f;
 float eyey = 1.0f;
 float eyez = 0.0f;
 
-float eyeTx = -10.0f;
-float eyeTy = 3.0f;
+float eyeTx = 0.0f;
+float eyeTy = 1.5f;
 float eyeTz = 0.0f;
 
+float lookx = 0.0f;
+float looky = 0.0f;
+float lookz = 0.0f;
+
+float lookTx = 0.0f;
+float lookTy = 0.0f;
+float lookTz = 0.0f;
+
 float carx = 0.2f;
-float cary = 0.0f;
+float cary = -0.1f;
 float carz = 0.5f;
-float carOy = 0.5f;
 
 float interSize = 1;
 float roadSize = 10;
@@ -127,7 +135,14 @@ void init() {
   glutPostRedisplay();
 }
 
-
+void smooth (float *val, float target, float offBy, float step) {
+  if (*val < target - offBy)
+    *val += step;
+  else if (*val > target + offBy)
+    *val -= step;
+  else
+    *val = target;
+}
 
 GLvoid DrawGLScene() {
   float i;
@@ -146,6 +161,12 @@ GLvoid DrawGLScene() {
   //*************************************************************************
   switch (cam) {
   case BEHIND:
+    cS = 0.0325;
+    accuracy = 0.05;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
     switch (tfacing) {
     case 0:
       eyeTx = 3.0f;
@@ -175,6 +196,12 @@ GLvoid DrawGLScene() {
     break;
 
   case RIGHT:
+    cS = 0.0325;
+    accuracy = 0.05;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
     switch (tfacing) {
     case 0:
       eyeTx = 0.0f;
@@ -204,6 +231,12 @@ GLvoid DrawGLScene() {
     break;
 
   case LEFT:
+    cS = 0.0325;
+    accuracy = 0.05;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
     switch (tfacing) {
     case 0:
       eyeTx = 0.0f;
@@ -231,67 +264,354 @@ GLvoid DrawGLScene() {
     }
 
     break;
+
+  case RESET:
+    cS = 0.0125;
+    accuracy = 0.03;
+
+    switch (tfacing) {
+    case 0:
+      lookTx = -1.0f;
+      lookTy = 0.5f;
+      lookTz = 0.0f;
+
+      eyeTx = -0.5f;
+      eyeTy = 0.5f;
+      eyeTz = 0.0f;
+      break;
+
+    case 1:
+      lookTx = 0.0f;
+      lookTy = 0.5f;
+      lookTz = 1.0f;
+
+      eyeTx = 0.0f;
+      eyeTy = 0.5f;
+      eyeTz = 0.5f;
+      break;
+
+    case 2:
+      lookTx = 1.0f;
+      lookTy = 0.5f;
+      lookTz = 0.0f;
+
+      eyeTx = 0.5f;
+      eyeTy = 0.5f;
+      eyeTz = 0.0f;
+      break;
+
+    case 3:
+      lookTx = 0.0f;
+      lookTy = 0.5f;
+      lookTz = -1.0f;
+
+      eyeTx = 0.0f;
+      eyeTy = 0.5f;
+      eyeTz = -0.5f;
+      break;
+    }
+
+    break;
+
+  case BR:
+    cS = 0.135;
+    accuracy = 0.2;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 1:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 2:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 3:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+    }
+
+    break;
+
+  case FR:
+    cS = 0.135;
+    accuracy = 0.2;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 1:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 2:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 3:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+    }
+
+    break;
+
+  case FL:
+    cS = 0.135;
+    accuracy = 0.2;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 1:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 2:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 3:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+    }
+
+    break;
+
+  case BL:
+    cS = 0.135;
+    accuracy = 0.2;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+
+    case 1:
+      eyeTx = 6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 2:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = -6.0f;
+      break;
+
+    case 3:
+      eyeTx = -6.0f;
+      eyeTy = 4.0f;
+      eyeTz = 6.0f;
+      break;
+    }
+
+    break;
+
+  //*************
+
+  case DBR:
+    cS = 0.4;
+    accuracy = 0.45;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 1:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 2:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 3:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+    }
+
+    break;
+
+  case DFR:
+    cS = 0.4;
+    accuracy = 0.45;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 1:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 2:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 3:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+    }
+
+    break;
+
+  case DFL:
+    cS = 0.4;
+    accuracy = 0.45;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 1:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 2:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 3:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+    }
+
+    break;
+
+  case DBL:
+    cS = 0.4;
+    accuracy = 0.45;
+    lookTx = 0.0f;
+    lookTy = 0.5f;
+    lookTz = 0.0f;
+
+    switch (tfacing) {
+    case 0:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+
+    case 1:
+      eyeTx = 18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 2:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = -18.0f;
+      break;
+
+    case 3:
+      eyeTx = -18.0f;
+      eyeTy = 12.0f;
+      eyeTz = 18.0f;
+      break;
+    }
+
+    break;
   }
 
 
   //*************************************************************************
   // Smooth camera handling, attempt to get eyex/eyey/eyez to target positions
   //*************************************************************************
-  bool bx1 = false;
-  bool bx2 = false;
-  bool by1 = false;
-  bool by2 = false;
-  bool bz1 = false;
-  bool bz2 = false;
 
-  if (eyex < eyeTx - 0.1) {
-    eyex += cS;
-  } else {
-    bx1 = true;
-  }
+  smooth (&eyex, eyeTx, accuracy, cS);
+  smooth (&eyey, eyeTy, accuracy, cS);
+  smooth (&eyez, eyeTz, accuracy, cS);
 
-  if (eyey < eyeTy - 0.1) {
-    eyey += cS;
-  } else {
-    by1 = true;
-  }
-
-  if (eyez < eyeTz - 0.1) {
-    eyez += cS;
-  } else {
-    bz1 = true;
-  }
-
-  if (eyex > eyeTx + 0.1) {
-    eyex -= cS;
-  } else {
-    bx2 = true;
-  }
-
-  if (eyey > eyeTy + 0.1) {
-    eyey -= cS;
-  } else {
-    by2 = true;
-  }
-
-  if (eyez > eyeTz + 0.1) {
-    eyez -= cS;
-  } else {
-    bz2 = true;
-  }
-
-  if (bx1 && bx2)
-    eyex = eyeTx;
-
-  if (by1 && by2)
-    eyey = eyeTy;
-
-  if (bz1 && bz2)
-    eyez = eyeTz;
+  smooth (&lookx, lookTx, accuracy, cS);
+  smooth (&looky, lookTy, accuracy, cS);
+  smooth (&lookz, lookTz, accuracy, cS);
 
   //*************************************************************************
 
-  gluLookAt (eyex + carx, eyey + cary, eyez + carz, carx, cary + carOy, carz, 0, 1, 0);
+  gluLookAt (eyex + carx, eyey + cary, eyez + carz, lookx + carx, looky + cary, lookz + carz, 0, 1, 0);
 
   glEnable (GL_COLOR_MATERIAL);
 
@@ -337,8 +657,8 @@ GLvoid DrawGLScene() {
     float min = (90 * (facing + turnDir) ) - 1;
     float max = (90 * (facing + turnDir) ) + 1;
 
-    printf("%f, %f, %f\n", min, max, turnRot);
     times += 1;
+
     if (times > 120)
       turnRot = 90 * (facing + turnDir);
 
@@ -452,7 +772,7 @@ void genBuildings() {
         // gen cylinder
         glPushMatrix();
 
-        glTranslatef (vert1x + 5, 3, vert1z + 5);
+        glTranslatef (vert1x - 5, 3, vert1z + 3);
         cylinderBuilding();
 
         glPopMatrix();
@@ -462,7 +782,7 @@ void genBuildings() {
         // gen sphere
         glPushMatrix();
 
-        glTranslatef (vert1x + 2, 1, vert1z + 7);
+        glTranslatef (vert1x - 3, 1, vert1z + 5);
         sphereBuilding();
 
         glPopMatrix();
@@ -472,7 +792,7 @@ void genBuildings() {
         // gen cube
         glPushMatrix();
 
-        glTranslatef (vert1x + 7, 1, vert1z + 2);
+        glTranslatef (vert1x - 9, 1, vert1z + 4);
         squareBuilding();
 
         glPopMatrix();
@@ -990,7 +1310,7 @@ void NormalKey (GLubyte key, GLint x, GLint y) {
     break;
 
   case 'j': // left
-    if (!turning && atIntersection() ) {
+    if (!turning /*&& atIntersection() */) {
       turning = true;
       turnDir = 1;
     }
@@ -998,7 +1318,7 @@ void NormalKey (GLubyte key, GLint x, GLint y) {
     break;
 
   case 'l': // right
-    if (!turning && atIntersection() ) {
+    if (!turning /*&& atIntersection()*/ ) {
       turning = true;
       turnDir = -1;
     }
