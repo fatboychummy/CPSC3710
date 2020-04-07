@@ -26,7 +26,9 @@ bool turning = false;
 bool atIntersection = false;
 
 int facing = 0;
-int turnDir = -1;
+int turnDir = 0;
+
+float turnRot = 0;
 
 float eyex = -10.0f;
 float eyey = 3.0f;
@@ -137,7 +139,20 @@ GLvoid DrawGLScene() {
 
   glPushMatrix();
   glTranslatef(carx, cary, carz);
-  glRotatef(0 + (90 * facing), 0, 1, 0);
+  if (turning) {
+    glRotatef(turnRot, 0, 1, 0);
+    turnRot += turnDir;
+    float min = (90 * (facing + turnDir)) - 1;
+    float max = (90 * (facing + turnDir)) + 1;
+    if (turnRot > min && turnRot < max) {
+      turning = false;
+      facing = (facing + turnDir) % 4;
+      if (facing < 0) facing = 3;
+    }
+  } else {
+    turnRot = 0 + (90 * facing);
+    glRotatef(turnRot, 0, 1, 0);
+  }
   glTranslatef(-1.15, 0, -0.4);
   drawCar();
   glPopMatrix();
@@ -700,61 +715,67 @@ void NormalKey(GLubyte key, GLint x, GLint y) {
 }
 
 static void SpecialKeyFunc( int Key, int x, int y ) {
-  switch (Key) {
-  case GLUT_KEY_DOWN:
-    switch (facing) {
-    case 0:
-      carx += 0.2;
+  if (!turning) {
+    switch (Key) {
+    case GLUT_KEY_DOWN:
+      switch (facing) {
+      case 0:
+        carx += 0.2;
+        break;
+      case 1:
+        carz -= 0.2;
+        break;
+      case 2:
+        carx -= 0.2;
+        break;
+      case 3:
+        carz += 0.2;
+        break;
+      default:
+        printf("Error attempting to move: Facing is %d", facing);
+      }
+      //glutPostRedisplay();
       break;
-    case 1:
-      carz -= 0.2;
+    case GLUT_KEY_UP:
+      switch (facing) {
+      case 0:
+        carx -= 0.2;
+        break;
+      case 1:
+        carz += 0.2;
+        break;
+      case 2:
+        carx += 0.2;
+        break;
+      case 3:
+        carz -= 0.2;
+        break;
+      default:
+        printf("Error attempting to move: Facing is %d", facing);
+      }
+      //glutPostRedisplay();
       break;
-    case 2:
-      carx -= 0.2;
+    case GLUT_KEY_RIGHT:
+      turning = true;
+      turnDir = -1;
+        /*
+        facing = (facing - 1) % 4;
+        if (facing < 0)
+          facing = 3;
+        */
       break;
-    case 3:
-      carz += 0.2;
+    case GLUT_KEY_LEFT:
+      turning = true;
+      turnDir = 1;
+        /*
+        facing = (facing + 1) % 4;
+        if (facing > 3)
+          facing = 0;
+        */
       break;
     default:
-      printf("Error attempting to move: Facing is %d", facing);
-    }
-    //glutPostRedisplay();
-    break;
-  case GLUT_KEY_UP:
-    switch (facing) {
-    case 0:
-      carx -= 0.2;
       break;
-    case 1:
-      carz += 0.2;
-      break;
-    case 2:
-      carx += 0.2;
-      break;
-    case 3:
-      carz -= 0.2;
-      break;
-    default:
-      printf("Error attempting to move: Facing is %d", facing);
     }
-    //glutPostRedisplay();
-    break;
-  case GLUT_KEY_RIGHT:
-    if (!turning) {
-      facing = (facing - 1) % 4;
-      if (facing < 0)
-        facing = 3;
-    }
-    break;
-  case GLUT_KEY_LEFT:
-    if (!turning) {
-      facing = (facing + 1) % 4;
-      if (facing > 3)
-        facing = 0;
-    }
-    break;
-  default:
-    break;
   }
 }
 
