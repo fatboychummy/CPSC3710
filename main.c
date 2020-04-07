@@ -1,4 +1,3 @@
-
 // This is demo program for creating a car using OpenGL.
 // The car can be run using control keys.
 // Original contribution: Sai Kumar Minajagi
@@ -337,7 +336,6 @@ GLvoid DrawGLScene() {
     float min = (90 * (facing + turnDir) ) - 1;
     float max = (90 * (facing + turnDir) ) + 1;
 
-    printf("%f, %f, %f\n", min, max, turnRot);
     times += 1;
     if (times > 120)
       turnRot = 90 * (facing + turnDir);
@@ -616,14 +614,6 @@ void squareBuilding() {
 }
 
 void drawCar() {
-
-  glColor3f (1.0, .75, 0.0);
-  glPointSize (30.0);
-  glBegin (GL_POINTS);
-  glVertex3f (0.2, 0.3, 0.3);
-  glVertex3f (0.2, 0.3, 0.5);
-  glEnd();
-  glPointSize (200.0);
   glBegin (GL_QUADS);
   /* top of cube*/
   //************************FRONT BODY****************************************
@@ -908,31 +898,48 @@ void drawCar() {
   gluCylinder (t, 0.06, 0, .2, 10, 10);
   glPopMatrix();
 
-  /********************REARLIGHTS***************************/
+  /*******************LICENSE*PLATE************************/
   glPushMatrix();
-  glColor3f (1.0, 0.0, 0.0);
-  glTranslatef (1.9, 0, 0);
-  glPointSize (30.0);
-  glBegin (GL_POINTS);
-  glVertex3f (0.2, 0.3, 0.3);
-  glVertex3f (0.2, 0.3, 0.5);
-  glEnd();
+  glColor3f (0.2, 0.2, 0.2);
+  glTranslatef(2.04,0.4,0.4);
+  glRotatef (90, 1, 0, 0);
+  glRotatef (45, 0, 0, 1);
+  gluCylinder(t,0.1,0.1,0.1,4,10);
   glPopMatrix();
 
-  /*******************LICENSE*PLATE************************/
-  char text[] = "CPSC 3710";
-  glBegin (GL_QUADS);
-  glNormal3f (0.0f, 0.0f, -1.0f);
-  glColor3f (0.2, 0.2, 0.2);
-  glTexCoord2f (0.995f, 0.005f);
-  glVertex3f (0.2f, 0.25f, 0.35f);
-  glTexCoord2f (2.995f, 2.995f);
-  glVertex3f (0.2f,  0.35f, 0.35f);
-  glTexCoord2f (0.005f, 0.995f);
-  glVertex3f (0.2f,  0.35f, 0.45f);
-  glTexCoord2f (0.005f, 0.005f);
-  glVertex3f (0.2f, 0.25f, 0.45f);
-  glEnd();
+  /********************REARLIGHTS***************************/
+  glPushMatrix();
+  glColor3f (1, 0, 0);
+  glTranslatef(2.06,0.4,0.27);
+  glRotatef (90, 1, 0, 0);
+  glRotatef (45, 0, 0, 1);
+  gluCylinder(t,0.06,0.06,0.1,4,10);
+
+  glRotatef (315, 0, 0, 1);
+  glRotatef (270, 1, 0, 0);
+
+  glTranslatef(0,0,0.27);
+  glRotatef (90, 1, 0, 0);
+  glRotatef (45, 0, 0, 1);
+  gluCylinder(t,0.06,0.06,0.1,4,10);
+  glPopMatrix();
+
+  /********************HEADLIGHTS***************************/
+  glPushMatrix();
+  glColor3f (1.0, .75, 0.0);
+  glTranslatef(0.24,0.4,0.27);
+  glRotatef (90, 1, 0, 0);
+  glRotatef (45, 0, 0, 1);
+  gluCylinder(t,0.06,0.06,0.1,4,10);
+
+  glRotatef (315, 0, 0, 1);
+  glRotatef (270, 1, 0, 0);
+
+  glTranslatef(0,0,0.27);
+  glRotatef (90, 1, 0, 0);
+  glRotatef (45, 0, 0, 1);
+  gluCylinder(t,0.06,0.06,0.1,4,10);
+  glPopMatrix();
 }
 
 void NormalKeyUp (GLubyte key, GLint x, GLint y) {
@@ -953,7 +960,8 @@ bool atIntersection() {
   switch (facing) {
   case 0:
   case 2:
-    if (fmod (carx, (roadSize + interSize) ) >= 5.4 && fmod (carx, (roadSize + interSize) ) <= 5.6) {
+    if (fmod (carx, (roadSize + interSize) ) >= 5.1 && fmod (carx, (roadSize + interSize) ) <= 5.9) {
+	carx = (int)carx + 0.5;
       return true;
     }
 
@@ -961,7 +969,8 @@ bool atIntersection() {
 
   case 1:
   case 3:
-    if (fmod (carz, (roadSize + interSize) ) >= 0.4 && fmod (carz, (roadSize + interSize) ) <= 0.6) {
+    if (fmod (carz, (roadSize + interSize) ) >= 0.1 && fmod (carz, (roadSize + interSize) ) <= 0.9) {
+	carz = (int)carz + 0.5;
       return true;
     }
 
